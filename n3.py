@@ -1,14 +1,12 @@
 check = True
-x = input()
+x = input("Введите пароль длинной больше 16 символов и без спец символов: ")
 if(len(x) <16):
-    print("too small")
+    print("слишком короткий пароль")
     check = False
 else:
-    for char in x:
-        if(not char.isalpha() and not char.isdigit()):
-            print("have special")
-            check = False
-            break
-        
+    if(x.isidentifier() == False):
+        print("есть спец символы")
+        check = False
+
 if(check == True):
-    print("all good")
+    print("пароль подходит")

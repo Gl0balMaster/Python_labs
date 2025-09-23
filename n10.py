@@ -1,5 +1,5 @@
-x= int(input())
-y = int(input())
+x= int(input("Введите первое число: "))
+y = int(input("Введите второе число: "))
 print("x+y ", x+y)
 print("x-y ", x-y)
 print("x*y ", x*y)

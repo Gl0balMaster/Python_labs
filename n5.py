@@ -1,10 +1,9 @@
-bool = False
-x = input("Введите число чтобы узнать, является ли оно магическим: ")
+x = int(input("Введите число чтобы узнать, является ли оно магическим: "))
 num_sum = 0
-if(int(x) % 7 == 0):
-    print("magic")
+if not x % 7:
+    print("Magic")
 else:
-    bool = True
-    num_sum = sum(list(map(int, list(x))))
-if bool == True:
+    while x != 0:
+        num_sum += x % 10
+        x//=10
     print(num_sum)

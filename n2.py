@@ -1,5 +1,5 @@
-chars = ['a', 'e', 'i', 'o', 'u']
 x= input("введите строку ")
+x = x.lower()
 x = x.replace('a','')
 x = x.replace('e','')
 x = x.replace('i','')

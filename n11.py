@@ -1,5 +1,4 @@
-months = [31,28,31,30,31,30,31,31,30,31,30,31]
-x=input("введите дату рождения в ф0рмате дд.мм.гг ")
+x=input("введите дату рождения в ф0рмате дд.мм ")
 x = x.split('.')
 day = int(x[0])
 month = int(x[1])
@@ -26,5 +25,7 @@ elif (month == 10 and day >= 23) or (month == 11 and day <= 21):
     print( "Скорпион")
 elif (month == 11 and day >= 22) or (month == 12 and day <= 21):
     print( "Стрелец")
-else:
+elif (month == 12 and day >= 22) or (month == 1 and day <= 20):
     print( "Козерог")
+else:
+    print("Неверный ввод даты")

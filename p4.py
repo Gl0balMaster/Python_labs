@@ -4,12 +4,10 @@ from IPython.display import display
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-# Настройка отображения
 plt.style.use('seaborn-v0_8')
 plt.rcParams['figure.figsize'] = (12, 6)
 pd.set_option('display.max_columns', None)
 
-# Загрузка данных
 data_set = pd.read_excel("D:/prog/lab4/p4/data.xlsx", "DATA")
 
 print("=== ИНФОРМАЦИЯ О ДАННЫХ ===")
@@ -20,19 +18,16 @@ print(data_set.dtypes)
 print("\nПервые 5 строк:")
 display(data_set.head())
 
-# Анализ пропущенных значений
 print("\n=== ПРОПУЩЕННЫЕ ЗНАЧЕНИЯ ===")
 missing_data = data_set.isnull().sum()
 missing_percent = (missing_data / len(data_set)) * 100
 missing_info = pd.DataFrame({'Количество': missing_data, 'Процент': missing_percent})
 display(missing_info[missing_info['Количество'] > 0])
 
-# Преобразование дат
 print("\n=== ПРЕОБРАЗОВАНИЕ ДАННЫХ ===")
 data_set['ISSUE_DATE'] = pd.to_datetime(data_set['ISSUE_DATE'])
 data_set['FLIGHT_DATE_LOC'] = pd.to_datetime(data_set['FLIGHT_DATE_LOC'])
 
-# Добавление временных признаков
 data_set['issue_month'] = data_set['ISSUE_DATE'].dt.month
 data_set['issue_year'] = data_set['ISSUE_DATE'].dt.year
 data_set['issue_quarter'] = data_set['ISSUE_DATE'].dt.quarter
@@ -42,16 +37,13 @@ data_set['flight_month'] = data_set['FLIGHT_DATE_LOC'].dt.month
 data_set['flight_year'] = data_set['FLIGHT_DATE_LOC'].dt.year
 data_set['days_before_flight'] = (data_set['FLIGHT_DATE_LOC'] - data_set['ISSUE_DATE']).dt.days
 
-# Общие описательные статистики
 print("\n=== ОБЩИЕ ДЕСКРИПТИВНЫЕ СТАТИСТИКИ ===")
 numeric_columns = data_set.select_dtypes(include=[np.number]).columns
 if len(numeric_columns) > 0:
     display(data_set[numeric_columns].describe())
 
-# Анализ аэропортов
 print("\n=== АНАЛИЗ АЭРОПОРТОВ ===")
 
-# Топ-10 городов отправления
 print("\n--- Топ-10 городов отправления ---")
 orig_city_analysis = data_set.groupby('ORIG_CITY_CODE').agg({
     'ORIG_CITY_CODE': 'count',
@@ -61,7 +53,6 @@ orig_city_analysis = orig_city_analysis.sort_values('count', ascending=False)
 
 display(orig_city_analysis.head(10))
 
-# Топ-10 городов назначения
 print("\n--- Топ-10 городов назначения ---")
 dest_city_analysis = data_set.groupby('DEST_CITY_CODE').agg({
     'DEST_CITY_CODE': 'count',
@@ -71,7 +62,6 @@ dest_city_analysis = dest_city_analysis.sort_values('count', ascending=False)
 
 display(dest_city_analysis.head(10))
 
-# Визуализация аэропортов
 plt.figure(figsize=(15, 10))
 
 plt.subplot(2, 2, 1)
@@ -103,16 +93,13 @@ plt.ylabel('Сумма выручки')
 plt.tight_layout()
 plt.show()
 
-# Анализ сезонности
 print("\n=== АНАЛИЗ СЕЗОННОСТИ ===")
 
-# Сезонность по месяцам покупки
 monthly_sales = data_set.groupby('issue_month').agg({
     'ISSUE_DATE': 'count',
     'REVENUE_AMOUNT': 'sum'
 }).rename(columns={'ISSUE_DATE': 'count'}).reset_index()
 
-# Сезонность по месяцам перелета
 monthly_flights = data_set.groupby('flight_month').agg({
     'FLIGHT_DATE_LOC': 'count',
     'REVENUE_AMOUNT': 'sum'
@@ -122,7 +109,6 @@ plt.figure(figsize=(15, 10))
 
 months = ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн', 'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек']
 
-# Продажи по месяцам (левый верхний)
 plt.subplot(2, 2, 1)
 plt.bar(monthly_sales['issue_month'], monthly_sales['count'])
 plt.title('Продажи по месяцам (покупка)')
@@ -130,7 +116,6 @@ plt.xlabel('Месяц')
 plt.ylabel('Количество продаж')
 plt.xticks(range(1, 13), months, rotation=45)
 
-# Перелеты по месяцам (правый верхний)
 plt.subplot(2, 2, 2)
 plt.bar(monthly_flights['flight_month'], monthly_flights['count'])
 plt.title('Перелеты по месяцам')
@@ -138,14 +123,12 @@ plt.xlabel('Месяц')
 plt.ylabel('Количество перелетов')
 plt.xticks(range(1, 13), months, rotation=45)
 
-# Тепловая карта сезонности (левый нижний)
 plt.subplot(2, 2, 3)
 if 'issue_year' in data_set.columns:
     seasonality_heatmap = data_set.groupby(['issue_year', 'issue_month']).size().unstack(fill_value=0)
     sns.heatmap(seasonality_heatmap, annot=True, fmt='d', cmap='YlOrRd', linewidths=0.5)
     plt.title('Сезонность продаж по годам и месяцам')
 
-# Выручка по месяцам (правый нижний)
 plt.subplot(2, 2, 4)
 plt.plot(monthly_sales['issue_month'], monthly_sales['REVENUE_AMOUNT'], marker='o', linewidth=2)
 plt.title('Выручка по месяцам покупки')
@@ -156,13 +139,11 @@ plt.xticks(range(1, 13), months, rotation=45)
 plt.tight_layout()
 plt.show()
 
-# Анализ типов пассажиров
 print("\n=== АНАЛИЗ ТИПОВ ПАССАЖИРОВ ===")
 
 pax_analysis = data_set['PAX_TYPE'].value_counts().reset_index()
 pax_analysis.columns = ['PAX_TYPE', 'count']
 
-# Анализ выручки по типам пассажиров
 pax_revenue = data_set.groupby('PAX_TYPE').agg({
     'REVENUE_AMOUNT': ['sum', 'mean', 'count']
 }).round(2)
@@ -193,7 +174,6 @@ plt.ylabel('Средняя выручка')
 plt.tight_layout()
 plt.show()
 
-# Анализ программы лояльности
 print("\n=== АНАЛИЗ ПРОГРАММЫ ЛОЯЛЬНОСТИ ===")
 
 ffp_analysis = data_set.groupby('FFP_FLAG').agg({
@@ -206,10 +186,8 @@ ffp_analysis = ffp_analysis.sort_values('count', ascending=False)
 print("Анализ программы лояльности:")
 display(ffp_analysis)
 
-# Анализ способов оплаты - ТОЛЬКО ТОП-10
 print("\n=== АНАЛИЗ СПОСОБОВ ОПЛАТЫ (ТОП-10) ===")
 
-# Получаем все способы оплаты и берем топ-10 по количеству транзакций
 all_payments = data_set.groupby('FOP_TYPE_CODE').agg({
     'FOP_TYPE_CODE': 'count',
     'REVENUE_AMOUNT': ['sum', 'mean']
@@ -217,7 +195,6 @@ all_payments = data_set.groupby('FOP_TYPE_CODE').agg({
 all_payments.columns = ['count', 'total_revenue', 'avg_revenue']
 all_payments = all_payments.sort_values('count', ascending=False)
 
-# Ограничиваем до топ-10
 payment_analysis = all_payments.head(10)
 
 print("Топ-10 способов оплаты:")
@@ -244,7 +221,6 @@ plt.ylabel('Средняя выручка')
 plt.tight_layout()
 plt.show()
 
-# Анализ типов перелетов
 print("\n=== АНАЛИЗ ТИПОВ ПЕРЕЛЕТОВ ===")
 
 route_analysis = data_set.groupby('ROUTE_FLIGHT_TYPE').agg({
@@ -257,7 +233,6 @@ route_analysis = route_analysis.sort_values('count', ascending=False)
 print("Анализ типов перелетов:")
 display(route_analysis)
 
-# Анализ способов покупки
 print("\n=== АНАЛИЗ СПОСОБОВ ПОКУПКИ ===")
 
 sale_analysis = data_set.groupby('SALE_TYPE').agg({
@@ -270,10 +245,8 @@ sale_analysis = sale_analysis.sort_values('count', ascending=False)
 print("Анализ способов покупки:")
 display(sale_analysis)
 
-# Прогнозирование объемов продаж
 print("\n=== ПРОГНОЗИРОВАНИЕ ОБЪЕМОВ ПРОДАЖ ===")
 
-# Ежедневные продажи для анализа временных рядов
 daily_sales_ts = data_set.groupby('ISSUE_DATE').agg({
     'ISSUE_DATE': 'count',
     'REVENUE_AMOUNT': 'sum'
@@ -281,13 +254,11 @@ daily_sales_ts = data_set.groupby('ISSUE_DATE').agg({
 
 daily_sales_ts = daily_sales_ts.sort_values('ISSUE_DATE')
 
-# Ежедневные перелеты
 daily_flights_ts = data_set.groupby('FLIGHT_DATE_LOC').agg({
     'FLIGHT_DATE_LOC': 'count'
 }).rename(columns={'FLIGHT_DATE_LOC': 'flight_count'}).reset_index()
 daily_flights_ts = daily_flights_ts.sort_values('FLIGHT_DATE_LOC')
 
-# Добавляем скользящие средние для выявления трендов
 daily_sales_ts['ticket_ma_7'] = daily_sales_ts['ticket_count'].rolling(window=7).mean()
 daily_sales_ts['ticket_ma_30'] = daily_sales_ts['ticket_count'].rolling(window=30).mean()
 daily_sales_ts['revenue_ma_7'] = daily_sales_ts['REVENUE_AMOUNT'].rolling(window=7).mean()
@@ -295,10 +266,8 @@ daily_sales_ts['revenue_ma_7'] = daily_sales_ts['REVENUE_AMOUNT'].rolling(window
 daily_flights_ts['flight_ma_7'] = daily_flights_ts['flight_count'].rolling(window=7).mean()
 daily_flights_ts['flight_ma_30'] = daily_flights_ts['flight_count'].rolling(window=30).mean()
 
-# Визуализация временных рядов с трендами
 plt.figure(figsize=(16, 12))
 
-# График продаж билетов
 plt.subplot(3, 1, 1)
 plt.plot(daily_sales_ts['ISSUE_DATE'], daily_sales_ts['ticket_count'],
          alpha=0.3, label='Фактические продажи', linewidth=1, color='blue')
@@ -312,7 +281,6 @@ plt.ylabel('Количество билетов')
 plt.legend()
 plt.grid(True, alpha=0.3)
 
-# График выручки
 plt.subplot(3, 1, 2)
 plt.plot(daily_sales_ts['ISSUE_DATE'], daily_sales_ts['REVENUE_AMOUNT'],
          alpha=0.3, label='Фактическая выручка', linewidth=1, color='orange')
@@ -324,7 +292,6 @@ plt.ylabel('Сумма выручки')
 plt.legend()
 plt.grid(True, alpha=0.3)
 
-# График перелетов
 plt.subplot(3, 1, 3)
 plt.plot(daily_flights_ts['FLIGHT_DATE_LOC'], daily_flights_ts['flight_count'],
          alpha=0.3, label='Фактические перелеты', linewidth=1, color='purple')
@@ -341,10 +308,8 @@ plt.grid(True, alpha=0.3)
 plt.tight_layout()
 plt.show()
 
-# Простое прогнозирование на основе сезонности
 print("\n--- Прогноз на основе сезонных patterns ---")
 
-# Анализ среднемесячных показателей
 monthly_avg = data_set.groupby('issue_month').agg({
     'ISSUE_DATE': 'count',
     'REVENUE_AMOUNT': 'sum'
@@ -356,7 +321,6 @@ monthly_avg['avg_revenue'] = monthly_avg['avg_revenue'] / len(data_set['issue_ye
 print("Среднемесячные показатели:")
 display(monthly_avg.round(2))
 
-# Визуализация сезонных patterns для прогнозирования
 plt.figure(figsize=(15, 5))
 
 plt.subplot(1, 2, 1)
@@ -376,7 +340,6 @@ plt.xticks(range(1, 13), months, rotation=45)
 plt.tight_layout()
 plt.show()
 
-# Анализ роста/снижения
 if len(daily_sales_ts) > 60:
     last_30_days = daily_sales_ts['ticket_count'].tail(30).mean()
     prev_30_days = daily_sales_ts['ticket_count'].tail(60).head(30).mean()
@@ -388,14 +351,12 @@ if len(daily_sales_ts) > 60:
     print(f"Средние продажи за предыдущие 30 дней: {prev_30_days:.1f} билетов/день")
     print(f"Темп роста: {growth_rate:+.1f}%")
 
-# Прогноз на следующий месяц на основе тренда
 if 'ticket_ma_30' in daily_sales_ts.columns:
     current_trend = daily_sales_ts['ticket_ma_30'].dropna().iloc[-1]
     print(f"\n--- Базовый прогноз ---")
     print(f"Текущий тренд продаж: {current_trend:.1f} билетов/день")
     print(f"Прогноз на следующий месяц: {current_trend * 30:.0f} билетов")
 
-# Сводный анализ
 print("\n=== СВОДНЫЙ АНАЛИЗ ===")
 
 print("1. ОБЩИЕ СТАТИСТИКИ:")

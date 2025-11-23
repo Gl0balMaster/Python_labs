@@ -1,8 +1,8 @@
-def matrixTranspose(matrix):
+def matrix_transpose(matrix):
     row_size = len(matrix[0])
     transposed = list()
     for item in matrix:
-        if(row_size != len(item)):
+        if row_size != len(item):
             print("неправильно задана матрица")
             return
     for i in range(0,row_size):
@@ -14,4 +14,4 @@ def matrixTranspose(matrix):
             transposed[i].append(item)
         temp.clear()
     print(transposed)
-    #return(transposed)
+    return transposed

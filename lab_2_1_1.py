@@ -1,14 +1,13 @@
-str = input("Введите строку из слов")
-words =  str.split()
-dict = dict()
+input_string = input("Введите строку из слов")
+words =  input_string.split()
+dictionary = dict()
 unique  = 0
 for word in words:
-    word.lower()
-    if(dict.get(word.lower()) != None):
-        dict[word.lower()]+=1
+    word = word.lower()
+    if not dictionary.get(word.lower()) is None:
+        dictionary[word.lower()]+=1
     else:
-        dict[word.lower()] = 1
-for word in dict:
-    unique +=1
-print("строка в формате слово : значение",dict)
-print("unique word amount: ", unique)
+        dictionary[word.lower()] = 1
+unique = len(dictionary)
+print("строка в формате слово : значение",dictionary)
+print("количество уникальных слов: ", unique)

@@ -1,54 +1,60 @@
 x = input("Введите числа через пробел: ")
-nums = x.split(' ')
+nums = x.split()
 numstyped = []
 for num in nums:
-    if(num.count('.') == 1):
+    if num.count('.') == 1:
         numstyped.append(float(num))
     else:
         numstyped.append(int(num))
 
-
-
-dict = dict()
-unique = 0
-repeat  =  []
+dict_count = dict()
+unique = []
+repeat = []
 div2 = []
 ndiv2 = []
 neg = []
 fl = []
 div5 = 0
-maximum = max(nums)
-minimum = min(nums)
-for num in nums:
-    if(dict.get(num) != None):
-        dict[num]+=1
-    else:
-        dict[num] = 1
+
+maximum = max(numstyped)
+minimum = min(numstyped)
 
 for num in numstyped:
-    if(type(num) == int):
+    num_str = str(num)
+    if dict_count.get(num_str) is not None:
+        dict_count[num_str] += 1
+    else:
+        dict_count[num_str] = 1
 
-        if(num % 2 == 1):
-            ndiv2.append(num)
-        elif(num % 2 == 0):
+    if type(num) == int:
+        if num % 2 == 0:
             div2.append(num)
-    if(num < 0 ):
+        else:
+            ndiv2.append(num)
+
+    if num < 0:
         neg.append(num)
-    if(type(num) == float):
+
+    if type(num) == float:
         fl.append(num)
-    if(num % 5 == 0):
+
+    if num % 5 == 0:
         div5 += num
 
-for num in dict:
-    unique+=1
+for num_str, count in dict_count.items():
+    num_value = float(num_str) if '.' in num_str else int(num_str)
+    if count == 1:
+        unique.append(num_value)
+    else:
+        if num_value not in repeat:
+            repeat.append(num_value)
 
-print(unique)
-print(repeat)
-print(div2)
-print(ndiv2)
-print(neg)
-print(fl)
-print(div5)
-print(maximum)
-print(minimum)
-
+print("Уникальные числа:", unique)
+print("Повторяющиеся числа:", repeat)
+print("Четные числа:", div2)
+print("Нечетные числа:", ndiv2)
+print("Отрицательные числа:", neg)
+print("Числа с плавающей точкой:", fl)
+print("Сумма чисел кратных 5:", div5)
+print("Максимальное число:", maximum)
+print("Минимальное число:", minimum)

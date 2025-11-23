@@ -6,7 +6,7 @@ words = x.split()
 for word in words:
     if arr.get(word) == None:
         arr[word] = 1
-    else: 
+    else:
         arr[word]+=1
 
 for word in arr:

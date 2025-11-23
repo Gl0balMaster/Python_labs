@@ -1,4 +1,3 @@
-
 x = (input("Веедите числа: "))
 nums = x.split()
 numstyped = dict()
